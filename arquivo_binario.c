@@ -130,6 +130,8 @@ void cadastrar(){
 			exit(1);
 		}
 	
+	fseek(A, 0, SEEK_END);
+	
 	do{
 		system("cls");
 		printf("\nDigite os dados do seu produto: \n");
