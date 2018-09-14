@@ -10,7 +10,6 @@ Algoritmos II - Profª Andrea*/
 #include<time.h>
 #include<windows.h>
 #include<conio.h>
-<<<<<<< HEAD
 #include<ctype.h>
 
 typedef struct Dados {
@@ -19,8 +18,6 @@ typedef struct Dados {
 	float preco;
 	
 } market;
-=======
->>>>>>> b604f90700f028c6bcdbcfb3559430cfc96782c3
 
 void menu();
 void menuBoasVindas();
@@ -76,22 +73,6 @@ void menu(){
 
 		if(tecla == 13){
 			switch(cont){
-<<<<<<< HEAD
-				case 2:
-					//converteBinario();
-					break;
-				case 4:
-					//converteDecimal();
-					break;
-				case 6:
-					//converteOctal();
-					break;
-				case 8:
-					//converteHexa();
-					break;
-				case 10:
-					//sobre();
-=======
 //				case 2:
 //					cadastrar();
 //					break;
@@ -99,9 +80,9 @@ void menu(){
 //					break;
 //				case 6:
 //					break;
-//				case 8:
-//					consultarTudo();
-//					break;
+				case 8:
+					consultarTudo();
+					break;
 //				case 10:
 //					consultarId();
 //					break;
@@ -116,18 +97,12 @@ void menu(){
 					break;
 				case 28:
 					sobre();
->>>>>>> b604f90700f028c6bcdbcfb3559430cfc96782c3
 					break;
 			}
 		}
 
-<<<<<<< HEAD
-		if(tecla==32){
-			//ajuda();
-=======
 		if(GetAsyncKeyState(VK_F1)){
 			ajuda();
->>>>>>> b604f90700f028c6bcdbcfb3559430cfc96782c3
 		}
 	}
 
@@ -135,7 +110,6 @@ void menu(){
 
 }
 
-<<<<<<< HEAD
 void nomeArq(char nome[]){
 	printf("\nDigite o nome do arquivo: ");
 	fflush(stdin);
@@ -325,7 +299,8 @@ void consultarTudo(){
 	
 	fclose(A);
 	system("pause");
-=======
+}
+
 void ajuda(){
 	int tecla = 32;
 	system("cls");
@@ -423,7 +398,6 @@ void personalizacao(){
 	{
 		menu();
 	}	
->>>>>>> b604f90700f028c6bcdbcfb3559430cfc96782c3
 }
 
 void sair(){
