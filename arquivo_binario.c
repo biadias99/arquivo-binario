@@ -11,7 +11,8 @@ Algoritmos II - Profª Andrea*/
 #include<windows.h>
 #include<conio.h>
 #include<ctype.h>
-
+#include<limits.h>
+#include<unistd.h>
 typedef struct Dados {
 	int id, quant, status;
 	char nome[50], marca[20], cat[20];
@@ -22,7 +23,7 @@ typedef struct Dados {
 void menu();
 void nomeArq(char nome[]);
 void pegaPasta();
-void cadastrar();
+void cadastrar(char cwd[]);
 void consultarTudo();
 void consultarId();
 void consultarCat();
@@ -36,9 +37,26 @@ void gotoxy(int x,int y);
 void personalizacao();
 void ajuda();
 void sobre();
+void pegaDiretorioAtual();
 
-void menu(){
+void pegaDiretorioAtual(char cwd1[]){
+	char cwd[PATH_MAX];
+   if (getcwd(cwd, sizeof(cwd)) != NULL) {
+       printf("Current working dir: %s\n", cwd);
+   } else {
+       printf("getcwd() error");
+       exit(1);
+   }
+   
+   strcpy(cwd1, cwd);
+   
+}
+
+void menu(char cwd[]){
 	system("cls");
+	
+	//printf("Current working dir: %s\n", cwd);
+	
 	gotoxy(70,40);system("date/t");
 	gotoxy(72,42);system("time/t");
 	int tecla;
@@ -81,14 +99,14 @@ void menu(){
 		if(tecla == 13){
 			switch(cont){
 				case 2:
-					cadastrar();
+					cadastrar(cwd);
 					break;
 //				case 4:
 //					break;
 //				case 6:
 //					break;
 				case 8:
-					consultarTudo();
+					consultarTudo(cwd);
 					break;
 //				case 10:
 //					consultarId();
@@ -134,7 +152,7 @@ void pegaPasta(){
 	chdir(nome);
 }
 
-void cadastrar(){
+void cadastrar( char cwd[]){
 	system("cls");
 	FILE *A;
 	market BC;
@@ -182,9 +200,9 @@ void cadastrar(){
 	} while (resp == 'S');
 	
 	fclose(A);
-	chdir("..");
-	system("cd");
-	menu();
+	chdir(cwd);
+	//system("cd");
+	menu(cwd);
 }
 
 void consultarId(){
@@ -295,7 +313,7 @@ void exclusaoLogica(){
 	
 }
 
-void consultarTudo(){
+void consultarTudo(char cwd[]){
 	FILE *A;
 	market BC;
 	char nome[20];
@@ -330,18 +348,18 @@ void consultarTudo(){
 	}
 	
 	fclose(A);
-	chdir("..");
-	system("cd");
+	chdir(cwd);
+	//system("cd");
 	printf("\n\n\n\n\t<ESC> Voltar ao menu principal.");
 	tecla = getch();
 	while(tecla!=27){
 		tecla = getch();
 	}
 	if(tecla == 27)
-		menu();
+		menu(cwd);
 }
 
-void ajuda(){
+void ajuda(char cwd[]){
 	int tecla = 32;
 	system("cls");
 	gotoxy(70,40);system("date/t");
@@ -361,10 +379,10 @@ void ajuda(){
 	}
 
 	if(tecla == 27)
-		menu();
+		menu(cwd);
 }
 
-void sobre(){
+void sobre(char cwd[]){
 	int tecla = 32;
 	system("cls");
 	gotoxy(70,40);system("date/t");
@@ -383,11 +401,14 @@ void sobre(){
 	}
 
 	if(tecla == 27)
-		menu();
+		menu(cwd);
 	
 }
 
 void menuBoasVindas(){
+	char cwd[PATH_MAX];
+	pegaDiretorioAtual(cwd);
+	
 	char tecla;
 	int aux = 1;
 	int tent = 1;
@@ -398,11 +419,11 @@ void menuBoasVindas(){
 	hideCursor();
 
 	if(tecla = getch()){
-		menu();
+		menu(cwd);
 	}
 }
 
-void personalizacao(){
+void personalizacao(char cwd[]){
 	char fundo;
 	char esc;
 	int pers;
@@ -436,7 +457,7 @@ void personalizacao(){
 	}
 	if(esc==27)
 	{
-		menu();
+		menu(cwd);
 	}	
 }
 
