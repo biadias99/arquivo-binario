@@ -20,6 +20,13 @@ typedef struct Dados {
 } market;
 
 void menu();
+void nomeArq(char nome[]);
+void pegaPasta();
+void cadastrar();
+void consultarTudo();
+void consultarId();
+void consultarCat();
+void exclusaoLogica();
 void menuBoasVindas();
 void sair();
 void moldura();
@@ -73,9 +80,9 @@ void menu(){
 
 		if(tecla == 13){
 			switch(cont){
-//				case 2:
-//					cadastrar();
-//					break;
+				case 2:
+					cadastrar();
+					break;
 //				case 4:
 //					break;
 //				case 6:
@@ -111,17 +118,30 @@ void menu(){
 }
 
 void nomeArq(char nome[]){
-	printf("\nDigite o nome do arquivo: ");
+	showCursor();
+	printf("Digite o nome do arquivo: ");
 	fflush(stdin);
 	gets(nome);
 }
 
+void pegaPasta(){
+	char nome[20];
+	showCursor();
+	printf("Digite o nome da pasta: ");
+	fflush(stdin);
+	gets(nome);
+	mkdir(nome);
+	chdir(nome);
+}
+
 void cadastrar(){
+	system("cls");
 	FILE *A;
 	market BC;
 	char resp, nome[20];
-	
-	nomeArq(nome);
+	gotoxy(30,3);printf("Supermercado Bick - Cadastrar");
+	gotoxy(10,6);pegaPasta();
+	gotoxy(10,8);nomeArq(nome);
 	strcat(nome, ".bh");
 	
 	if((A = fopen(nome, "r+b")) == NULL)
@@ -134,25 +154,26 @@ void cadastrar(){
 	
 	do{
 		system("cls");
-		printf("\nDigite os dados do seu produto: \n");
+		gotoxy(30,3);printf("Supermercado Bick - Cadastrar");
+		gotoxy(10,6);printf("Digite os dados do seu produto:");
 		fflush(stdin);
 		BC.status = 1;
-		printf("\nId: ");
+		gotoxy(10,8);printf("Id: ");
 		scanf("%d", &BC.id);
 		fflush(stdin);
-		printf("\nNome: ");
+		gotoxy(10,10);printf("Nome: ");
 		gets(BC.nome);
-		printf("\nMarca: ");
+		gotoxy(10,12);printf("Marca: ");
 		gets(BC.marca);
-		printf("\nCategoria: ");
+		gotoxy(10,14);printf("Categoria: ");
 		gets(BC.cat);
-		printf("\nQuantidade: ");
+		gotoxy(10,16);printf("Quantidade: ");
 		scanf("%d", &BC.quant);
-		printf("\nPreco: ");
+		gotoxy(10,18);printf("Preco: ");
 		scanf("%f", &BC.preco);
 		fwrite(&BC, sizeof(BC), 1, A);
 		do{
-			printf("\nDeseja cadastrar mais um? (S/N): ");
+			gotoxy(10,20);printf("Deseja cadastrar mais um? (S/N): ");
 			fflush(stdin);
 			scanf("%c", &resp);
 			resp = toupper(resp);
@@ -161,6 +182,9 @@ void cadastrar(){
 	} while (resp == 'S');
 	
 	fclose(A);
+	chdir("..");
+	system("cd");
+	menu();
 }
 
 void consultarId(){
@@ -275,8 +299,12 @@ void consultarTudo(){
 	FILE *A;
 	market BC;
 	char nome[20];
-	
-	nomeArq(nome);
+	int aux = 4;
+	int tecla = 32;
+	system("cls");
+	gotoxy(30,4);printf("Supermercado Bick - Consultar tudo");
+	gotoxy(10,6);pegaPasta();
+	gotoxy(10,8);nomeArq(nome);
 	strcat(nome, ".bh");
 	
 	if((A = fopen(nome, "rb")) == NULL){
@@ -285,22 +313,32 @@ void consultarTudo(){
 	}
 	
 	system("cls");
-	
+	gotoxy(30,3);printf("Supermercado Bick - Consultar tudo");
+		
 	while((fread(&BC, sizeof(BC), 1, A)) == 1) {
 		
 		if(BC.status == 1){
-			printf("\nId: %d", BC.id);
-			printf("\nNome: %s", BC.nome);
-			printf("\nMarca: %s", BC.marca);
-			printf("\nCategoria: %s", BC.cat);
-			printf("\nQuantidade: %d", BC.quant);
-			printf("\nPreco: %.2f\n\n", BC.preco);
+			gotoxy(10,aux+=2);printf("Id: %d", BC.id);
+			gotoxy(10,aux+=2);printf("Nome: %s", BC.nome);
+			gotoxy(10,aux+=2);printf("Marca: %s", BC.marca);
+			gotoxy(10,aux+=2);printf("Categoria: %s", BC.cat);
+			gotoxy(10,aux+=2);printf("Quantidade: %d", BC.quant);
+			gotoxy(10,aux+=2);printf("Preco: %.2f", BC.preco);
+			aux+=2;
 		}
 		
 	}
 	
 	fclose(A);
-	system("pause");
+	chdir("..");
+	system("cd");
+	printf("\n\n\n\n\t<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu();
 }
 
 void ajuda(){
