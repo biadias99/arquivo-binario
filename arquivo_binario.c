@@ -42,7 +42,12 @@ void personalizacao();
 void ajuda();
 void sobre();
 void pegaDiretorioAtual();
-
+void alterar(char cwd[]);
+void alterarNomeArq(char cwd[]);
+void removerArq(char cwd[]);
+void exclusao(char cwd[]);
+void exclusaoFisica(char nome[]);
+	
 void pegaDiretorioAtual(char cwd1[]){
 	char cwd[PATH_MAX];
    if (getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -107,10 +112,12 @@ void menu(char cwd[]){
 				case 2:
 					cadastrar(cwd);
 					break;
-//				case 4:
-//					break;
-//				case 6:
-//					break;
+				case 4:
+					alterar(cwd);
+					break;
+				case 6:
+					exclusao(cwd);
+					break;
 				case 8:
 					consultarTudo(cwd);
 					break;
@@ -119,6 +126,12 @@ void menu(char cwd[]){
 					break;
 				case 12:
 					consultarCat(cwd);
+					break;
+				case 14:
+					alterarNomeArq(cwd);
+					break;
+				case 16:
+					removerArq(cwd);
 					break;
 				case 18:
 					alterarDataEHora(cwd);
@@ -346,6 +359,156 @@ void cadastrar(char cwd[]){
 	menu(cwd);
 }
 
+void alterar(char cwd[]){
+	FILE *A;
+	market BC;
+	char nome[20], resp;
+	int id, achou = 0;
+	int tecla = 32;
+	system("cls");
+	
+	gotoxy(30,4);printf("Supermercado Bick - Alterar Produtos");
+	gotoxy(10,6);pegaPasta();
+	gotoxy(10,8);nomeArq(nome);
+	
+	strcat(nome, ".bh");
+	
+	if((A = fopen(nome, "r+b")) == NULL){
+		printf("\nErro ao abrir o arquivo.");
+		exit(1);
+	}
+	
+	gotoxy(10,12);printf("Digite o Id do produto que deseja alterar: ");
+	scanf("%d", &id);
+	
+	system("cls");
+	
+	gotoxy(30,4);printf("Supermercado Bick - Alterar Produtos");
+
+	while((fread(&BC, sizeof(BC), 1, A)) == 1 && achou == 0){
+		if(id == BC.id && BC.status){
+			gotoxy(10,6);printf("Id: %d", BC.id);
+			gotoxy(10,8);printf("Nome: %s", BC.nome);
+			gotoxy(10,10);printf("Marca: %s", BC.marca);
+			gotoxy(10,12);printf("Categoria: %s", BC.cat);
+			gotoxy(10,14);printf("Quantidade: %d", BC.quant);
+			gotoxy(10,16);printf("Preco: %.2f\n\n", BC.preco);
+			
+			do{
+				gotoxy(10,18);printf("Deseja mesmo alterar esse produto?(S/N): ");
+				fflush(stdin);
+				scanf("%c", &resp);
+				resp = toupper(resp);
+			} while(resp != 'S' && resp != 'N');
+			
+			if(resp == 'S'){
+				system("cls");
+				gotoxy(10,6);printf("Digite os dados do novo produto:");
+				fflush(stdin);
+				gotoxy(10,10);printf("Nome: ");
+				gets(BC.nome);
+				gotoxy(10,12);printf("Marca: ");
+				gets(BC.marca);
+				gotoxy(10,14);printf("Categoria: ");
+				gets(BC.cat);
+				gotoxy(10,16);printf("Quantidade: ");
+				scanf("%d", &BC.quant);
+				gotoxy(10,18);printf("Preco: ");
+				scanf("%f", &BC.preco);
+				fseek(A, -sizeof(BC), SEEK_CUR);
+				fwrite(&BC, sizeof(BC), 1, A);	
+				fflush(A);
+				achou = 1;
+			}
+			if(resp == 'N')
+				achou = 1;
+		}
+	}
+	
+	if(achou == 0){
+		gotoxy(10,6);printf("Nao existe produto registrado com esse id.");
+	}
+	
+	fclose(A);
+	chdir(cwd);
+	//system("cd");
+	printf("\n\n\n\n\t<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu(cwd);
+}
+
+void alterarNomeArq(char cwd[]){
+	system("cls");
+    char arq_old[20];
+    char arq_new[20];
+    int tecla = 32;
+    int result;
+    showCursor();
+    gotoxy(30,3);printf("Supermercado Bick - Alterar nome arquivo");
+    gotoxy(10,6);pegaPasta();
+    gotoxy(10,8);printf("Digite o nome do arquivo a ser alterado: ");
+    fflush(stdin);
+    gets(arq_old);
+    gotoxy(10,10);printf("Digite o novo nome do arquivo: ");
+    fflush(stdin);
+    gets(arq_new);
+    result = rename (strcat(arq_old, ".bh"), strcat(arq_new, ".bh") ); 
+    if(result == 0){
+        gotoxy(10,12);printf("Nome do arquivo alterado com sucesso. O novo nome do seu arquivo eh %s",arq_new);
+    }else{
+        gotoxy(10,12);printf("Houve um problema com a alteracao. Verifique o nome do seu arquivo.");
+    }
+    
+    chdir(cwd);
+    gotoxy(10,20);printf("<ESC> Voltar ao menu principal.");
+    tecla = getch();
+    while(tecla!=27){
+        tecla = getch();
+    }
+    if(tecla == 27)
+        menu(cwd);
+}
+
+void removerArq(char cwd[]){
+	system("cls");
+    char nome[20], resp;
+    int tecla = 32;
+    int result;
+    showCursor();
+    gotoxy(30,3);printf("Supermercado Bick - Remover arquivo");
+    gotoxy(10,6);pegaPasta();
+    gotoxy(10,8);printf("Digite o nome do arquivo que deseja remover: ");
+    fflush(stdin);
+    gets(nome);
+    do{
+		gotoxy(10,10);printf("Deseja mesmo remover o arquivo?(S/N): ");
+		fflush(stdin);
+		scanf("%c", &resp);
+		resp = toupper(resp);
+	} while(resp != 'S' && resp != 'N');
+   if(resp == 'S'); 
+    	result = remove(strcat(nome, ".bh")); 
+    	
+    if(result == 0){
+        gotoxy(10,12);printf("Arquivo removido com sucesso");
+    }else{
+        gotoxy(10,12);printf("Houve um problema com a alteracao. Verifique o nome do seu arquivo.");
+    }
+    
+    chdir(cwd);
+    gotoxy(10,20);printf("<ESC> Voltar ao menu principal.");
+    tecla = getch();
+    while(tecla!=27){
+        tecla = getch();
+    }
+    if(tecla == 27)
+        menu(cwd);
+}
+
 void consultarId(char cwd[]){
 	FILE *A;
 	market BC;
@@ -373,7 +536,7 @@ void consultarId(char cwd[]){
 	gotoxy(30,4);printf("Supermercado Bick - Consultar por id");
 
 	while((fread(&BC, sizeof(BC), 1, A)) == 1 && achou == 0){
-		if(id == BC.id){
+		if(id == BC.id && BC.status){
 			achou = 1;
 			gotoxy(10,6);printf("Id: %d", BC.id);
 			gotoxy(10,8);printf("Nome: %s", BC.nome);
@@ -427,7 +590,7 @@ void consultarCat(char cwd[]){
 	gotoxy(30,4);printf("Supermercado Bick - Consultar por categoria");
 
 	while((fread(&BC, sizeof(BC), 1, A)) == 1){
-		if(stricmp(cat, BC.cat) == 0){
+		if(stricmp(cat, BC.cat) == 0 && BC.status){
 			achou++;
 			gotoxy(10,aux+=2);printf("Id: %d", BC.id);
 			gotoxy(10,aux+=2);printf("Nome: %s", BC.nome);
@@ -454,33 +617,110 @@ void consultarCat(char cwd[]){
 		menu(cwd);
 }
 
-void exclusaoLogica(){
-	FILE *A;
+void exclusao(char cwd[]){
+	FILE *A, *B;
 	market BC;
-	char nome[20];
-	int id;
+	system("cls");
+    char nome[20], resp, answer;
+    int tecla = 32;
+    int id, achou = 0;
+    showCursor();
 	
-	nomeArq(nome);
-	strcat(nome, ".bh");
-	
-	if((A = fopen(nome, "r+b")) == NULL){
-		printf("\nErro ao abrir o arquivo.");
-		exit(1);
-	}
-	
-	printf("\nDigite o Id do produto que deseja excluir: ");
-	scanf("%d", &id);
-	
-	while(fread(&BC, sizeof(BC), 1, A) == 1){
-		if(id == BC.id && BC.status == 1){
-			BC.status = 0;
-			fseek(A, -sizeof(BC), SEEK_CUR);
-			fwrite(&BC, sizeof(BC), 1, A);
-			fclose(A);
+    gotoxy(30,3);printf("Supermercado Bick - Excluir Produto");
+    gotoxy(10,6);pegaPasta();
+    gotoxy(10,8);nomeArq(nome);
+    
+    strcat(nome, ".bh");
+    
+    do{
+		gotoxy(10,12);printf("Digite o Id do produto que deseja remover: ");
+		scanf("%d", &id);
+		
+		system("cls");
+	    
+	    gotoxy(30,3);printf("Supermercado Bick - Excluir Produto");
+	     
+	    if((A = fopen(nome, "r+b")) == NULL){
+			printf("\nErro ao abrir o arquivo.");
+			exit(1);
 		}
+		rewind(A);
+		achou = 0;
+		
+	   	while((fread(&BC, sizeof(BC), 1, A)) == 1 && achou == 0){
+			if(id == BC.id && BC.status){
+				gotoxy(10,6);printf("Id: %d", BC.id);
+				gotoxy(10,8);printf("Nome: %s", BC.nome);
+				gotoxy(10,10);printf("Marca: %s", BC.marca);
+				gotoxy(10,12);printf("Categoria: %s", BC.cat);
+				gotoxy(10,14);printf("Quantidade: %d", BC.quant);
+				gotoxy(10,16);printf("Preco: %.2f\n\n", BC.preco);
+				
+				do{
+					gotoxy(10,18);printf("Deseja mesmo remover esse produto?(S/N): ");
+					fflush(stdin);
+					scanf("%c", &resp);
+					resp = toupper(resp);
+				} while(resp != 'S' && resp != 'N');
+				
+				if(resp == 'S'){
+					BC.status = 0;
+					fseek(A, -sizeof(BC), SEEK_CUR);
+					fwrite(&BC, sizeof(BC), 1, A);	
+					fflush(A);
+					achou = 1;
+				}
+				if(resp == 'N')
+					achou = 1;
+			}
+			
+		}
+		
+		if(achou == 0){
+			gotoxy(10,6);printf("Nao existe produto registrado com esse id.");
+		}
+			
+		fclose(A);
+		
+		do{
+			gotoxy(10,20);printf("Deseja remover outro produto?(S/N): ");
+			fflush(stdin);
+			scanf("%c", &answer);
+			answer = toupper(answer);
+		} while(answer != 'S' && answer != 'N');
+		system("cls");
+	} while (answer == 'S');
+	
+	exclusaoFisica(nome);
+	
+	chdir(cwd);
+	//system("cd");
+	printf("\n\n\n\n\t<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu(cwd);
+}
+
+void exclusaoFisica(char nome[]){
+	FILE *A, *B;
+	market BC;
+	
+	A = fopen(nome, "rb");
+	B = fopen("novo1.bh", "wb");
+	 
+	while(fread(&BC, sizeof(BC), 1, A) == 1){
+    	if(BC.status)
+    		fwrite(&BC, sizeof(BC), 1, B);
 	}
 	
+	fclose(A);
+	fclose(B);
 	
+	remove(nome);
+	rename("novo1.bh", nome);
 }
 
 void consultarTudo(char cwd[]){
