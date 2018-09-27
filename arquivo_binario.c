@@ -20,10 +20,13 @@ typedef struct Dados {
 	
 } market;
 
-void alterarDataEHora();
+void alterarDataEHora(char cwd[]);
 void menu();
 void nomeArq(char nome[]);
 void pegaPasta();
+void criarUmaPasta(char cwd[]);
+void alterarNomePasta(char cwd[]);
+void mudarArquivoPasta(char cwd[]);
 void cadastrar(char cwd[]);
 void consultarTudo();
 void consultarId();
@@ -67,22 +70,22 @@ void menu(char cwd[]){
 	hideCursor();
 	gotoxy(30,3);printf("Supermercado Bick - Menu principal");
 	gotoxy(7,6);printf("->");
-	gotoxy(10,6);printf("Cadastrar alimentos"); //2
-	gotoxy(10,8);printf("Alterar alimentos"); //4
-	gotoxy(10,10);printf("Excluir alimentos"); // 6
-	gotoxy(10,12);printf("Consultar todos os registros");
-	gotoxy(10,14);printf("Consultar por id");
-	gotoxy(10,16);printf("Consultar por categoria");
+	gotoxy(10,6);printf("Cadastrar produtos"); //2 ok
+	gotoxy(10,8);printf("Alterar produtos"); //4 ok
+	gotoxy(10,10);printf("Excluir produtos"); // 6 ok
+	gotoxy(10,12);printf("Consultar todos os registros"); // 8 ok
+	gotoxy(10,14);printf("Consultar por id"); // 10 ok
+	gotoxy(10,16);printf("Consultar por categoria"); // 12 ok
 	gotoxy(10,18);printf("Trocar o nome do arquivo");
 	gotoxy(10,20);printf("Remover o arquivo do disco");
-	gotoxy(10,22);printf("Alterar data e hora"); //18
-	gotoxy(10,24);printf("Criar uma pasta");
-	gotoxy(10,26);printf("Alterar o nome de uma pasta");	
-	gotoxy(10,28);printf("Mudar um arquivo de pasta");
-	gotoxy(10,30);printf("Personalizacao"); //26
-	gotoxy(10,32);printf("Sobre");
-	gotoxy(10,36);printf("<ESC> Sair");
-	gotoxy(10,38);printf("<F1> Ajuda");
+	gotoxy(10,22);printf("Alterar data e hora"); //18 ok
+	gotoxy(10,24);printf("Criar uma pasta"); // 20 ok
+	gotoxy(10,26);printf("Alterar o nome de uma pasta"); // 22 ok	
+	gotoxy(10,28);printf("Mudar um arquivo de pasta"); // 24
+	gotoxy(10,30);printf("Personalizacao"); //26 ok
+	gotoxy(10,32);printf("Sobre"); // 28 ok
+	gotoxy(10,36);printf("<ESC> Sair"); // ok
+	gotoxy(10,38);printf("<F1> Ajuda"); // ok
 
    	while(tecla!=27){
    		gotoxy(10,14);tecla = getch();
@@ -118,7 +121,16 @@ void menu(char cwd[]){
 					consultarCat(cwd);
 					break;
 				case 18:
-					alterarDataEHora();
+					alterarDataEHora(cwd);
+					break;
+				case 20:
+					criarUmaPasta(cwd);
+					break;
+				case 22:
+					alterarNomePasta(cwd);
+					break;
+				case 24:
+					mudarArquivoPasta(cwd);
 					break;
 				case 26:
 					personalizacao();
@@ -138,13 +150,23 @@ void menu(char cwd[]){
 
 }
 
-void alterarDataEHora(){
+void alterarDataEHora(char cwd[]){
 	system("cls");
-	char data[11];
-	char hora[6];
+	int tecla = 32;
+	gotoxy(70,40);system("date/t");
+	gotoxy(72,42);system("time/t");
+	
 	gotoxy(30,3);printf("Supermercado Bick - Alterar data e hora");
-	gotoxy(10,6);scanf("%s",&data);
-	// bianca vai continuar
+	gotoxy(10,6);system("date");
+	gotoxy(10,8);system("time");
+
+	printf("\n\n\n\n\t<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu(cwd);
 }
 
 void nomeArq(char nome[]){
@@ -162,6 +184,58 @@ void pegaPasta(){
 	gets(nome);
 	mkdir(nome);
 	chdir(nome);
+}
+
+void criarUmaPasta(char cwd[]){
+	system("cls");
+	char nome[20];
+	int tecla = 32;
+	showCursor();
+	gotoxy(30,3);printf("Supermercado Bick - Criar uma pasta");
+	gotoxy(10,6);printf("Digite o nome da pasta: ");
+	fflush(stdin);
+	gets(nome);
+	mkdir(nome);
+	printf("\n\n\n\n\t<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu(cwd);
+}
+
+void alterarNomePasta(char cwd[]){
+	system("cls");
+	char pastaAnterior[20];
+	char pastaPosterior[20];
+	int tecla = 32;
+	int result;
+	showCursor();
+	gotoxy(30,3);printf("Supermercado Bick - Alterar nome pasta");
+	gotoxy(10,6);printf("Digite o nome da pasta a ser alterada: ");
+	fflush(stdin);
+	gets(pastaAnterior);
+	gotoxy(10,8);printf("Digite o novo nome da pasta: ");
+	fflush(stdin);
+	gets(pastaPosterior);
+	result = rename (pastaAnterior, pastaPosterior); 
+	if(result == 0){
+		gotoxy(10,10);printf("Nome da pasta alterado com sucesso. O novo nome da sua pasta eh %s",pastaPosterior);
+	}else{
+		gotoxy(10,10);printf("Houve um problema com a alteracao. Verifique o nome da sua pasta.");
+	}
+	gotoxy(10,20);printf("<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu(cwd);
+}
+
+void mudarArquivoPasta(char cwd[]){
+	
 }
 
 void cadastrar( char cwd[]){
