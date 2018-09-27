@@ -81,7 +81,7 @@ void menu(char cwd[]){
 	gotoxy(10,22);printf("Alterar data e hora"); //18 ok
 	gotoxy(10,24);printf("Criar uma pasta"); // 20 ok
 	gotoxy(10,26);printf("Alterar o nome de uma pasta"); // 22 ok	
-	gotoxy(10,28);printf("Mudar um arquivo de pasta"); // 24
+	gotoxy(10,28);printf("Mudar um arquivo de pasta"); // 24 ok
 	gotoxy(10,30);printf("Personalizacao"); //26 ok
 	gotoxy(10,32);printf("Sobre"); // 28 ok
 	gotoxy(10,36);printf("<ESC> Sair"); // ok
@@ -235,10 +235,65 @@ void alterarNomePasta(char cwd[]){
 }
 
 void mudarArquivoPasta(char cwd[]){
+	market BC;
+	int tecla = 32;
+	FILE *original, *copia;
+  	char caracter, nome[20], nomeNovo[20];
+  	char pastaAnterior[20], pastaPosterior[20];
+	system("cls");
+	showCursor();
+	gotoxy(30,3);printf("Supermercado Bick - Mudar arquivo de pasta");
 	
+	gotoxy(10,6);printf("Digite o nome da pasta onde se encontra o arquivo: ");
+	fflush(stdin);
+	gets(pastaAnterior);
+	chdir(pastaAnterior);
+	gotoxy(10,8);printf("Digite o nome do arquivo: ");
+	fflush(stdin);
+	gets(nome);
+	strcat(nome, ".bh");
+	
+	if ((original = fopen(nome,"rb")) == NULL) {
+	    gotoxy(10,10);printf("Erro ao abrir o arquivo original. Verifique o nome do arquivo e se ele esta na pasta.");
+	    exit(1);
+  	}
+  	
+	gotoxy(10,10);printf("Digite o nome da pasta onde deseja enviar o arquivo: ");
+	fflush(stdin);
+	gets(pastaPosterior);
+	chdir(cwd);
+	mkdir(pastaPosterior);
+	chdir(pastaPosterior);
+	strcpy(nomeNovo, nome);
+  	
+	if ((copia = fopen(nomeNovo,"wb")) == NULL){
+	    gotoxy(10,12);printf("Erro ao abrir o arquivo copia. Verifique o nome da pasta.");
+	    exit(1);
+	}
+	
+  	while (fread(&BC, sizeof(BC), 1, original) == 1){
+  		if(BC.status == 1)
+			fwrite (&BC, sizeof(BC), 1, copia);
+	}
+    
+	fclose(original);
+	fclose(copia);
+  	gotoxy(10,12);printf("O arquivo %s foi mudado de pasta e agora esta em %s.",nome,pastaPosterior);
+  	chdir(cwd);
+  	chdir(pastaAnterior);
+  	remove(nome);
+  	chdir(cwd);
+  	hideCursor();
+	gotoxy(10,20);printf("<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu(cwd);
 }
 
-void cadastrar( char cwd[]){
+void cadastrar(char cwd[]){
 	system("cls");
 	FILE *A;
 	market BC;
