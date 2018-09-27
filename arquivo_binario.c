@@ -797,7 +797,7 @@ void ajuda(char cwd[]){
   	fclose (arquivo);
   	getch();
   
-	gotoxy(10,18);printf("<ESC> Voltar ao menu principal.");
+	gotoxy(10,22);printf("<ESC> Voltar ao menu principal.");
 
 	tecla = getch();
 
