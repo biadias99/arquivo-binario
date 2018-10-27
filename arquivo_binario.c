@@ -20,6 +20,7 @@ typedef struct Dados {
 	
 } market;
 
+void alterarDataEHora();
 void menu();
 void nomeArq(char nome[]);
 void pegaPasta();
@@ -42,7 +43,7 @@ void pegaDiretorioAtual();
 void pegaDiretorioAtual(char cwd1[]){
 	char cwd[PATH_MAX];
    if (getcwd(cwd, sizeof(cwd)) != NULL) {
-       printf("Current working dir: %s\n", cwd);
+       // printf("Current working dir: %s\n", cwd);
    } else {
        printf("getcwd() error");
        exit(1);
@@ -55,8 +56,10 @@ void pegaDiretorioAtual(char cwd1[]){
 void menu(char cwd[]){
 	system("cls");
 	
-	//printf("Current working dir: %s\n", cwd);
-	
+	//	printf("Current working dir: %s\n", cwd);
+	// system("date 31-02-1999");
+	// system("time 25:30");
+
 	gotoxy(70,40);system("date/t");
 	gotoxy(72,42);system("time/t");
 	int tecla;
@@ -108,14 +111,14 @@ void menu(char cwd[]){
 				case 8:
 					consultarTudo(cwd);
 					break;
-//				case 10:
-//					consultarId();
-//					break;
-//				case 12:
-//					consultarCat();
-//					break;
+				case 10:
+					consultarId(cwd);
+					break;
+				case 12:
+					consultarCat(cwd);
+					break;
 				case 18:
-					// alterarData();
+					alterarDataEHora();
 					break;
 				case 26:
 					personalizacao();
@@ -133,6 +136,15 @@ void menu(char cwd[]){
 
 	sair();
 
+}
+
+void alterarDataEHora(){
+	system("cls");
+	char data[11];
+	char hora[6];
+	gotoxy(30,3);printf("Supermercado Bick - Alterar data e hora");
+	gotoxy(10,6);scanf("%s",&data);
+	// bianca vai continuar
 }
 
 void nomeArq(char nome[]){
@@ -205,13 +217,18 @@ void cadastrar( char cwd[]){
 	menu(cwd);
 }
 
-void consultarId(){
+void consultarId(char cwd[]){
 	FILE *A;
 	market BC;
 	char nome[20];
 	int id, achou = 0;
+	int tecla = 32;
+	system("cls");
 	
-	nomeArq(nome);
+	gotoxy(30,4);printf("Supermercado Bick - Consultar por id");
+	gotoxy(10,6);pegaPasta();
+	gotoxy(10,8);nomeArq(nome);
+	
 	strcat(nome, ".bh");
 	
 	if((A = fopen(nome, "rb")) == NULL){
@@ -219,38 +236,53 @@ void consultarId(){
 		exit(1);
 	}
 	
-	printf("\nDigite o Id que deseja consultar: ");
+	gotoxy(10,12);printf("Digite o Id que deseja consultar: ");
 	scanf("%d", &id);
 	
 	system("cls");
 	
+	gotoxy(30,4);printf("Supermercado Bick - Consultar por id");
+
 	while((fread(&BC, sizeof(BC), 1, A)) == 1 && achou == 0){
 		if(id == BC.id){
 			achou = 1;
-			printf("\nId: %d", BC.id);
-			printf("\nNome: %s", BC.nome);
-			printf("\nMarca: %s", BC.marca);
-			printf("\nCategoria: %s", BC.cat);
-			printf("\nQuantidade: %d", BC.quant);
-			printf("\nPreco: %.2f\n\n", BC.preco);
+			gotoxy(10,6);printf("Id: %d", BC.id);
+			gotoxy(10,8);printf("Nome: %s", BC.nome);
+			gotoxy(10,10);printf("Marca: %s", BC.marca);
+			gotoxy(10,12);printf("Categoria: %s", BC.cat);
+			gotoxy(10,14);printf("Quantidade: %d", BC.quant);
+			gotoxy(10,16);printf("Preco: %.2f\n\n", BC.preco);
 		}
 	}
 	
 	if(achou == 0){
-		printf("\nNao existe produto registrado com esse id.");
+		gotoxy(10,1);printf("Nao existe produto registrado com esse id.");
 	}
 	
 	fclose(A);
-	system("pause");
+	chdir(cwd);
+	//system("cd");
+	printf("\n\n\n\n\t<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu(cwd);
 }
 
-void consultarCat(){
+void consultarCat(char cwd[]){
 	FILE *A;
 	market BC;
 	char nome[20], cat[20];
 	int achou = 0;
+	int tecla = 32;
+	int aux = 4;
+	system("cls");
+	gotoxy(30,4);printf("Supermercado Bick - Consultar por categoria");
+	gotoxy(10,6);pegaPasta();
+	gotoxy(10,8);nomeArq(nome);
 	
-	nomeArq(nome);
 	strcat(nome, ".bh");
 	
 	if((A = fopen(nome, "rb")) == NULL){
@@ -258,30 +290,39 @@ void consultarCat(){
 		exit(1);
 	}
 	
-	printf("\nDigite a categoria que deseja consultar: ");
+	gotoxy(10,12);printf("Digite a categoria que deseja consultar: ");
 	fflush(stdin);
 	gets(cat);
 	
 	system("cls");
-	
+	gotoxy(30,4);printf("Supermercado Bick - Consultar por categoria");
+
 	while((fread(&BC, sizeof(BC), 1, A)) == 1){
 		if(stricmp(cat, BC.cat) == 0){
-			achou = 1;
-			printf("\nId: %d", BC.id);
-			printf("\nNome: %s", BC.nome);
-			printf("\nMarca: %s", BC.marca);
-			printf("\nCategoria: %s", BC.cat);
-			printf("\nQuantidade: %d", BC.quant);
-			printf("\nPreco: %.2f\n\n", BC.preco);
+			achou++;
+			gotoxy(10,aux+=2);printf("Id: %d", BC.id);
+			gotoxy(10,aux+=2);printf("Nome: %s", BC.nome);
+			gotoxy(10,aux+=2);printf("Marca: %s", BC.marca);
+			gotoxy(10,aux+=2);printf("Categoria: %s", BC.cat);
+			gotoxy(10,aux+=2);printf("Quantidade: %d", BC.quant);
+			gotoxy(10,aux+=2);printf("Preco: %.2f", BC.preco);
+			aux+=2;
 		}
 	}
 	
 	if(achou == 0){
-		printf("\nNao existe produto registrado nessa categoria ou essa categoria nao existe.\n");
+		gotoxy(10,8);printf("Nao existe produto registrado nessa categoria ou essa categoria nao existe.\n");
 	}
-	
 	fclose(A);
-	system("pause");
+	chdir(cwd);
+	//system("cd");
+	printf("\n\n\n\n\t<ESC> Voltar ao menu principal.");
+	tecla = getch();
+	while(tecla!=27){
+		tecla = getch();
+	}
+	if(tecla == 27)
+		menu(cwd);
 }
 
 void exclusaoLogica(){
@@ -360,16 +401,33 @@ void consultarTudo(char cwd[]){
 }
 
 void ajuda(char cwd[]){
-	int tecla = 32;
+	int tecla = 32, i, cont = 0, aux = 4;
 	system("cls");
 	gotoxy(70,40);system("date/t");
 	gotoxy(72,42);system("time/t");
-	gotoxy(30,3);printf("Supermercado Bick - Ajuda");
-	gotoxy(10,6);printf("Utilize as setas do seu teclado para mover a seta para cima ou para baixo.");
-	gotoxy(10,8);printf("Para escolher uma opcao, aperte ENTER.");
-	gotoxy(10,10);printf("Para finalizar o programa, aperte ESC");
-	gotoxy(10,12);printf("id = Numero identificador do produto");
-	gotoxy(10,14);printf("Divirta-se!");
+	
+	FILE *arquivo;
+  	char texto[81];
+  	if ((arquivo = fopen("help.txt","r")) == NULL) {
+    	printf ("\n Arquivo não pode ser aberto");
+    	exit(1);
+  	}
+  	while (fgets(texto,80,arquivo) != NULL){
+  		for(i=0;texto[i]!='\0';i++){
+  			if(texto[i] != '\n')
+  				texto[i]-=5;	
+		}
+		if(cont == 0){
+			gotoxy(30,3);printf("%s", texto);
+		}
+  		else{
+  			gotoxy(10,aux+=2);printf("%s", texto);	
+		} 
+		cont++;
+	}
+  	fclose (arquivo);
+  	getch();
+  
 	gotoxy(10,18);printf("<ESC> Voltar ao menu principal.");
 
 	tecla = getch();
@@ -519,6 +577,6 @@ void gotoxy(int x,int y){
 
 int main(){
 	system("color 0E");
-	// system("mode con:cols=100 lines=50");
+	system("mode con:cols=100");
 	menuBoasVindas();
 }
